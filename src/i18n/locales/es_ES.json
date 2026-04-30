@@ -113,6 +113,7 @@
                 "detect_engine": "Motor de detección de idioma",
                 "label": "Traducir",
                 "second_language": "Segundo idioma de destino",
+                "third_language": "Tercer idioma de destino",
                 "auto_copy": "Copiar automático",
                 "history_disable": "Desactivar historial",
                 "pre_state": "Recordar posición",

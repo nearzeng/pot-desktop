@@ -96,6 +96,7 @@
                 "source_language": "Quellsprache",
                 "target_language": "Zielsprache",
                 "second_language": "Zweite Zielsprache",
+                "third_language": "Dritte Zielsprache",
                 "auto_copy": "Automatisch kopieren",
                 "source": "Quelltext",
                 "target": "Übersetzung",

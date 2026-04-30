@@ -142,6 +142,7 @@
                 "source_language": "출발 언어",
                 "target_language": "도착 언어",
                 "second_language": "대체 언어",
+                "third_language": "셋째 목표 언어",
                 "auto_copy": "자동 복사",
                 "source": "출발 언어",
                 "target": "도착 언어",

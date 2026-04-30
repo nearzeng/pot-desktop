@@ -97,6 +97,7 @@
                 "source_language": "原文語言",
                 "target_language": "譯文語言",
                 "second_language": "次要目標語言",
+                "third_language": "第三目標語言",
                 "auto_copy": "自動複製",
                 "source": "原文",
                 "target": "譯文",

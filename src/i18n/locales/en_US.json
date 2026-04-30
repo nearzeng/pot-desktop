@@ -97,6 +97,7 @@
                 "source_language": "Source Language",
                 "target_language": "Target Language",
                 "second_language": "Secondary Target Language",
+                "third_language": "Third Target Language",
                 "auto_copy": "Auto Copy",
                 "source": "Source",
                 "target": "Target",

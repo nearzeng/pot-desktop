@@ -17,6 +17,7 @@ export default function Translate() {
     const [sourceLanguage, setSourceLanguage] = useConfig('translate_source_language', 'auto');
     const [targetLanguage, setTargetLanguage] = useConfig('translate_target_language', 'zh_cn');
     const [secondLanguage, setSecondLanguage] = useConfig('translate_second_language', 'en');
+    const [thirdLanguage, setThirdLanguage] = useConfig('translate_third_language', 'de');
     const [detectEngine, setDetectEngine] = useConfig('translate_detect_engine', 'baidu');
     const [autoCopy, setAutoCopy] = useConfig('translate_auto_copy', 'disable');
     const [incrementalTranslate, setIncrementalTranslate] = useConfig('incremental_translate', false);
@@ -93,6 +94,27 @@ export default function Translate() {
                                     className='max-h-[50vh] overflow-y-auto'
                                     onAction={(key) => {
                                         setSecondLanguage(key);
+                                    }}
+                                >
+                                    {languageList.map((item) => {
+                                        return <DropdownItem key={item}>{t(`languages.${item}`)}</DropdownItem>;
+                                    })}
+                                </DropdownMenu>
+                            </Dropdown>
+                        )}
+                    </div>
+                    <div className='config-item'>
+                        <h3 className='my-auto mx-0'>{t('config.translate.third_language')}</h3>
+                        {thirdLanguage !== null && (
+                            <Dropdown>
+                                <DropdownTrigger>
+                                    <Button variant='bordered'>{t(`languages.${thirdLanguage}`)}</Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    aria-label='third language'
+                                    className='max-h-[50vh] overflow-y-auto'
+                                    onAction={(key) => {
+                                        setThirdLanguage(key);
                                     }}
                                 >
                                     {languageList.map((item) => {

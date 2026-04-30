@@ -97,6 +97,7 @@
                 "source_language": "Исходный язык",
                 "target_language": "Целевой язык",
                 "second_language": "Второй целевой язык",
+                "third_language": "Третий целевой язык",
                 "auto_copy": "Автокопирование",
                 "source": "Исходный",
                 "target": "Перевод",

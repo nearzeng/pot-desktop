@@ -64,12 +64,15 @@ export default function TargetArea(props) {
     const [collectionServiceList] = useConfig('collection_service_list', []);
     const [ttsServiceList] = useConfig('tts_service_list', ['lingva_tts']);
     const [translateSecondLanguage] = useConfig('translate_second_language', 'en');
+    const [translateThirdLanguage] = useConfig('translate_third_language', 'de');
     const [historyDisable] = useConfig('history_disable', false);
     const [isLoading, setIsLoading] = useState(false);
     const [hide, setHide] = useState(true);
 
     const [result, setResult] = useState('');
     const [error, setError] = useState('');
+    const [thirdResult, setThirdResult] = useState('');
+    const [thirdError, setThirdError] = useState('');
 
     const sourceText = useAtomValue(sourceTextAtom);
     const sourceLanguage = useAtomValue(sourceLanguageAtom);
@@ -96,6 +99,8 @@ export default function TargetArea(props) {
     useEffect(() => {
         setResult('');
         setError('');
+        setThirdResult('');
+        setThirdError('');
         if (
             sourceText.trim() !== '' &&
             sourceLanguage &&
@@ -166,6 +171,19 @@ export default function TargetArea(props) {
 
         const translateServiceName = getServiceName(currentTranslateServiceInstanceKey);
 
+        // Determine third language (skip if same as target or same as second language)
+        const actualTargetForThird = (() => {
+            if (sourceLanguage === 'auto' && targetLanguage === detectLanguage) {
+                return translateSecondLanguage;
+            }
+            return targetLanguage;
+        })();
+
+        const shouldTranslateThird =
+            translateThirdLanguage &&
+            translateThirdLanguage !== targetLanguage &&
+            translateThirdLanguage !== translateSecondLanguage;
+
         if (whetherPluginService(currentTranslateServiceInstanceKey)) {
             const pluginInfo = pluginList['translate'][translateServiceName];
             if (sourceLanguage in pluginInfo.language && targetLanguage in pluginInfo.language) {
@@ -228,6 +246,31 @@ export default function TargetArea(props) {
                                 default:
                                     break;
                             }
+                        }
+                        // Translate to third language if needed
+                        if (shouldTranslateThird && translateThirdLanguage in pluginInfo.language) {
+                            let thirdId = nanoid();
+                            translateID[index] = thirdId;
+                            func(sourceText.trim(), pluginInfo.language[sourceLanguage], pluginInfo.language[translateThirdLanguage], {
+                                config: instanceConfig,
+                                detect: detectLanguage,
+                                setResult: (v) => {
+                                    if (translateID[index] !== thirdId) return;
+                                    setThirdResult(typeof v === 'string' ? v.trim() : v);
+                                },
+                                utils,
+                            }).then(
+                                (v) => {
+                                    info(`[${currentTranslateServiceInstanceKey}]third resolve:` + v);
+                                    if (translateID[index] !== thirdId) return;
+                                    setThirdResult(typeof v === 'string' ? v.trim() : v);
+                                },
+                                (e) => {
+                                    info(`[${currentTranslateServiceInstanceKey}]third reject:` + e);
+                                    if (translateID[index] !== thirdId) return;
+                                    setThirdError(e.toString());
+                                }
+                            );
                         }
                     },
                     (e) => {
@@ -301,6 +344,32 @@ export default function TargetArea(props) {
                                     default:
                                         break;
                                 }
+                            }
+                            // Translate to third language if needed
+                            if (shouldTranslateThird && translateThirdLanguage in LanguageEnum) {
+                                let thirdId = nanoid();
+                                translateID[index] = thirdId;
+                                builtinServices[translateServiceName]
+                                    .translate(sourceText.trim(), LanguageEnum[sourceLanguage], LanguageEnum[translateThirdLanguage], {
+                                        config: instanceConfig,
+                                        detect: detectLanguage,
+                                        setResult: (v) => {
+                                            if (translateID[index] !== thirdId) return;
+                                            setThirdResult(typeof v === 'string' ? v.trim() : v);
+                                        },
+                                    })
+                                    .then(
+                                        (v) => {
+                                            info(`[${currentTranslateServiceInstanceKey}]third resolve:` + v);
+                                            if (translateID[index] !== thirdId) return;
+                                            setThirdResult(typeof v === 'string' ? v.trim() : v);
+                                        },
+                                        (e) => {
+                                            info(`[${currentTranslateServiceInstanceKey}]third reject:` + e);
+                                            if (translateID[index] !== thirdId) return;
+                                            setThirdError(e.toString());
+                                        }
+                                    );
                             }
                         },
                         (e) => {
@@ -626,6 +695,22 @@ export default function TargetArea(props) {
                             })
                         ) : (
                             <></>
+                        )}
+                        {/* Third language result */}
+                        {thirdResult !== '' && (
+                            <div className='mt-[8px] pt-[8px] border-t border-default-200'>
+                                <span className={`text-[${appFontSize - 2}px] text-default-500 mr-[8px]`}>
+                                    {t(`languages.${translateThirdLanguage}`)}
+                                </span>
+                                <span className={`text-[${appFontSize}px] select-text`}>
+                                    {typeof thirdResult === 'string' ? thirdResult : ''}
+                                </span>
+                            </div>
+                        )}
+                        {thirdError !== '' && (
+                            <p className={`text-[${appFontSize}px] text-orange-500 mt-[4px]`}>
+                                {thirdError}
+                            </p>
                         )}
                     </CardBody>
                     <CardFooter
